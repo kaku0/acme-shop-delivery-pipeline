@@ -1,5 +1,4 @@
 #!/bin/bash
-# Run unit tests against services
 
 set -e
 
@@ -46,10 +45,16 @@ trap cleanup EXIT
 
 # Unit tests for python3
 tests_python3 () {
+    # Check if this service skip tests
+    yq -r ' .flags["skip-tests"] | if . == null then false else . end ' $service_dir/metadata.yaml | grep -q true && {
+        echo "Skipping unit tests for $SERVICE"
+        exit 0
+    }
+
     # If there are no unit tests folder, we skip the unit tests
     if [ ! -d $tests_dir ]; then
         echo "Missing unit tests folder in $SERVICE. Skipping"
-        exit 0
+        exit 1
     fi
 
     # We need a build folder to perform tests
@@ -57,7 +62,6 @@ tests_python3 () {
         echo "Missing build folder in $SERVICE"
         exit 1
     fi
-
 
     if [ -z $PYTHONPATH ]; then
         PYTHONPATH=$ROOT/shared/tests/unit

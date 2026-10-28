@@ -1,0 +1,87 @@
+# Backstage catalog for this repository. Shared entries (groups, systems) are identical in every ACME Shop repo.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: delivery-pipeline
+  title: Delivery Pipeline
+  description: CI/CD pipeline that builds, tests and promotes every service through dev, staging and production.
+  tags:
+  - codepipeline
+  - codebuild
+  annotations:
+    github.com/project-slug: kaku0/acme-shop-delivery-pipeline
+  links:
+  - url: https://github.com/kaku0/acme-shop-delivery-pipeline
+    title: Source
+spec:
+  type: pipeline
+  lifecycle: production
+  system: commerce-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: commerce-platform
+  description: Shared event bus, libraries and delivery pipeline for all commerce services.
+spec:
+  owner: group:cloud-platform-team
+  domain: platform
+  type: platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: acme-group
+  description: 'ACME Retail Group: online and in-store retail.'
+spec:
+  type: root
+  profile:
+    displayName: ACME Retail Group
+    email: acme-group@acme-shop.example
+  children:
+  - digital-commerce
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: digital-commerce
+  description: Everything behind the ACME online shop.
+spec:
+  type: business-unit
+  profile:
+    displayName: Digital Commerce
+    email: digital-commerce@acme-shop.example
+  parent: acme-group
+  children:
+  - customer-experience
+  - order-fulfilment
+  - finance-technology
+  - platform-engineering
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-engineering
+  description: Shared cloud platform, libraries and delivery tooling.
+spec:
+  type: department
+  profile:
+    displayName: Platform Engineering
+    email: platform-engineering@acme-shop.example
+  parent: digital-commerce
+  children:
+  - cloud-platform-team
+  - developer-experience-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: cloud-platform-team
+  description: 'Shared AWS platform: event bus, accounts, shared libraries.'
+spec:
+  type: team
+  profile:
+    displayName: Cloud Platform Team
+    email: cloud-platform-team@acme-shop.example
+  parent: platform-engineering
+  children: []
